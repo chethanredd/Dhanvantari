@@ -1,3 +1,20 @@
+/**
+ * The above TypeScript code defines functions for getting health advice, analyzing symptoms urgency,
+ * providing wellness tips, and analyzing medicine images using Google's Generative AI, with error
+ * handling and language support.
+ * @param {string} prompt - The `prompt` parameter in the provided code refers to a string that
+ * contains a specific question or instruction related to health advice, symptoms analysis, wellness
+ * tips, or medicine image analysis. This prompt is used as input for generating responses or analyses
+ * using the Google Generative AI model.
+ * @param {string} [language=en] - The `language` parameter in the provided code refers to the language
+ * in which the responses should be generated or analyzed. It is used to determine the
+ * language-specific content and translations for the user interface. The default language is set to
+ * English ('en'), but the functions allow for specifying a different language if needed
+ * @returns The functions `getHealthAdvice`, `analyzeSymptomsUrgency`, `getWellnessTip`, and
+ * `analyzeMedicineImage` are being exported from the code snippet. These functions are designed to
+ * interact with a Google Generative AI model to provide health advice, analyze symptoms urgency, give
+ * wellness tips, and analyze medicine images respectively.
+ */
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { LANGUAGES, UI_TRANSLATIONS } from '../config/languages';
 
