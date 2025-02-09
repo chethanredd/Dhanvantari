@@ -1,8 +1,12 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { LANGUAGES, UI_TRANSLATIONS } from '../config/languages';
 
-//const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
-const genAI = new GoogleGenerativeAI("AIzaSyACSBICclogOAusHYODCBxwRMfRalvSa6A");
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+if (!apiKey) {
+    throw new Error('API key is not defined. Please check your .env file.');
+}
+
+const genAI = new GoogleGenerativeAI(apiKey);
 const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 const visionModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
@@ -58,6 +62,10 @@ IMPORTANT: If you cannot clearly identify the medicine or are uncertain, emphasi
 Respond in {LANGUAGE}.
 `;
 
+// Custom error types
+class SomeSpecificError extends Error {}
+class NetworkError extends Error {}
+
 export async function getHealthAdvice(prompt: string, language: string = 'en') {
   try {
     const languageDetectionResult = await model.generateContent(`
@@ -78,7 +86,13 @@ export async function getHealthAdvice(prompt: string, language: string = 'en') {
     return response.text();
   } catch (error: unknown) {
     console.error('Error getting health advice:', (error as Error).message || error);
-    return UI_TRANSLATIONS[language]?.error || UI_TRANSLATIONS.en.error;
+    if (error instanceof SomeSpecificError) {
+        return 'Specific error occurred. Please check your input.';
+    } else if (error instanceof NetworkError) {
+        return 'Network error. Please try again later.';
+    } else {
+        return UI_TRANSLATIONS[language]?.error || UI_TRANSLATIONS.en.error;
+    }
   }
 }
 
@@ -95,7 +109,13 @@ export async function analyzeSymptomsUrgency(symptoms: string, language: string 
     return response.text().toLowerCase().trim();
   } catch (error: unknown) {
     console.error('Error analyzing symptoms:', (error as Error).message || error);
-    return 'error';
+    if (error instanceof SomeSpecificError) {
+        return 'Specific error occurred. Please check your input.';
+    } else if (error instanceof NetworkError) {
+        return 'Network error. Please try again later.';
+    } else {
+        return 'error';
+    }
   }
 }
 
@@ -113,7 +133,13 @@ export async function getWellnessTip(language: string = 'en') {
     return response.text();
   } catch (error: unknown) {
     console.error('Error getting wellness tip:', (error as Error).message || error);
-    return UI_TRANSLATIONS[language]?.error || UI_TRANSLATIONS.en.error;
+    if (error instanceof SomeSpecificError) {
+        return 'Specific error occurred. Please check your input.';
+    } else if (error instanceof NetworkError) {
+        return 'Network error. Please try again later.';
+    } else {
+        return UI_TRANSLATIONS[language]?.error || UI_TRANSLATIONS.en.error;
+    }
   }
 }
 
@@ -139,6 +165,12 @@ export async function analyzeMedicineImage(imageData: string, language: string =
     return response.text();
   } catch (error: unknown) {
     console.error('Error analyzing medicine image:', (error as Error).message || error);
-    return UI_TRANSLATIONS[language]?.medicineAnalysisError || 'Error analyzing medicine image. Please try again.';
+    if (error instanceof SomeSpecificError) {
+        return 'Specific error occurred. Please check your input.';
+    } else if (error instanceof NetworkError) {
+        return 'Network error. Please try again later.';
+    } else {
+        return UI_TRANSLATIONS[language]?.medicineAnalysisError || 'Error analyzing medicine image. Please try again.';
+    }
   }
 }
