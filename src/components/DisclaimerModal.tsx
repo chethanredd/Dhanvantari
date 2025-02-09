@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { AlertTriangle, X } from 'lucide-react';
 
 interface DisclaimerModalProps {
@@ -8,19 +8,43 @@ interface DisclaimerModalProps {
 }
 
 export function DisclaimerModal({ isOpen, onClose, onConfirm }: DisclaimerModalProps) {
+  const modalRef = useRef<HTMLDivElement>(null);
+  const confirmButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      confirmButtonRef.current?.focus();
+      const handleKeyDown = (event: KeyboardEvent) => {
+        if (event.key === 'Escape') {
+          onClose();
+        }
+      };
+      document.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div 
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      role="dialog"
+      aria-labelledby="disclaimer-title"
+      ref={modalRef}
+    >
       <div className="bg-gradient-to-br from-blue-900 to-indigo-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border border-white/10">
         <div className="flex justify-between items-start mb-4">
           <div className="flex items-center space-x-2 text-yellow-400">
             <AlertTriangle className="h-6 w-6" />
-            <h3 className="text-xl font-bold text-white">Important Notice</h3>
+            <h3 id="disclaimer-title" className="text-xl font-bold text-white">Important Notice</h3>
           </div>
           <button 
             onClick={onClose}
             className="text-white/60 hover:text-white transition-colors"
+            aria-label="Close disclaimer"
           >
             <X className="h-5 w-5" />
           </button>
@@ -41,6 +65,7 @@ export function DisclaimerModal({ isOpen, onClose, onConfirm }: DisclaimerModalP
             Cancel
           </button>
           <button
+            ref={confirmButtonRef}
             onClick={onConfirm}
             className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
           >

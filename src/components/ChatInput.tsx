@@ -5,7 +5,7 @@ interface ChatInputProps {
   inputText: string;
   isListening: boolean;
   isSpeaking: boolean;
-  placeholder: string;
+  placeholder?: string;
   onInputChange: (text: string) => void;
   onSend: () => void;
   onToggleListening: () => void;
@@ -14,21 +14,23 @@ interface ChatInputProps {
   onOpenScanner: () => void;
 }
 
-export function ChatInput({
+export const ChatInput: React.FC<ChatInputProps> = ({
   inputText,
   isListening,
   isSpeaking,
-  placeholder,
+  placeholder = "Type a message...",
   onInputChange,
   onSend,
   onToggleListening,
   onToggleSpeaking,
   onFindHospitals,
   onOpenScanner,
-}: ChatInputProps) {
+}) => {
   return (
     <div className="flex flex-col space-y-2">
+      {/* Input Row */}
       <div className="flex items-center space-x-2">
+        {/* Voice Input Button */}
         <button
           onClick={onToggleListening}
           className={`p-2 sm:p-3 rounded-full transition-all flex-shrink-0 ${
@@ -44,16 +46,18 @@ export function ChatInput({
             <Mic className="h-5 w-5 sm:h-6 sm:w-6" />
           )}
         </button>
-        
+
+        {/* Text Input */}
         <input
           type="text"
           value={inputText}
           onChange={(e) => onInputChange(e.target.value)}
           placeholder={placeholder}
           className="flex-1 bg-white/10 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-0"
-          onKeyPress={(e) => e.key === 'Enter' && onSend()}
+          onKeyDown={(e) => e.key === 'Enter' && onSend()}
         />
-        
+
+        {/* Send Button */}
         <button
           onClick={onSend}
           className="p-2 sm:p-3 bg-blue-600 rounded-full hover:bg-blue-700 transition-colors flex-shrink-0"
@@ -61,7 +65,8 @@ export function ChatInput({
         >
           <Send className="h-5 w-5 sm:h-6 sm:w-6" />
         </button>
-        
+
+        {/* Toggle Voice Response */}
         <button
           onClick={onToggleSpeaking}
           className={`p-2 sm:p-3 rounded-full transition-colors flex-shrink-0 ${
@@ -76,8 +81,10 @@ export function ChatInput({
           )}
         </button>
       </div>
-      
+
+      {/* Action Buttons */}
       <div className="flex gap-2">
+        {/* Find Hospitals Button */}
         <button
           onClick={onFindHospitals}
           className="flex-1 flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 transition-colors rounded-full py-2 px-4"
@@ -86,7 +93,8 @@ export function ChatInput({
           <MapPin className="h-5 w-5" />
           <span className="text-sm sm:text-base">Find Hospitals</span>
         </button>
-        
+
+        {/* Scan Medicine Button */}
         <button
           onClick={onOpenScanner}
           className="flex-1 flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 transition-colors rounded-full py-2 px-4"
@@ -98,4 +106,4 @@ export function ChatInput({
       </div>
     </div>
   );
-}
+};
